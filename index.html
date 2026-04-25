@@ -812,9 +812,13 @@ section{position:relative;z-index:3}
   -webkit-text-fill-color:transparent;
 }
 .marquee-stack{display:flex;flex-direction:column;gap:1.5rem}
-.marquee{display:flex;white-space:nowrap;gap:0;will-change:transform}
-.marquee-1{animation:scroll 30s linear infinite}
-.marquee-2{animation:scroll 35s linear infinite reverse}
+.marquee{display:flex;white-space:nowrap;gap:0;width:max-content;will-change:transform}
+.marquee-1{animation:platform-scroll 60s linear infinite}
+.marquee-2{animation:platform-scroll 70s linear infinite reverse}
+@keyframes platform-scroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-66.6667%)}
+}
 .marquee-item{
   font-family:var(--display);
   font-style:italic;
@@ -1428,6 +1432,10 @@ footer::before{
   .marquee-item{ font-size: 4rem !important; }
   .top-marquee-track span{ font-size: 1.4rem !important; }
 
+  /* スマホではマーキースピードを速める */
+  .marquee-1{ animation-duration: 40s !important; }
+  .marquee-2{ animation-duration: 48s !important; }
+
   /* Platformセクションの上下に走る光るグラデ線のbox-shadow削減 */
   .platform::before,
   .platform::after,
@@ -1656,8 +1664,16 @@ footer::before{
       <span class="marquee-item outline">17LIVE<span class="star">✦</span></span>
       <span class="marquee-item fill">TikTok<span class="star">✦</span></span>
       <span class="marquee-item outline">IRIAM<span class="star">✦</span></span>
+      <span class="marquee-item fill">Pococha<span class="star">✦</span></span>
+      <span class="marquee-item outline">17LIVE<span class="star">✦</span></span>
+      <span class="marquee-item fill">TikTok<span class="star">✦</span></span>
+      <span class="marquee-item outline">IRIAM<span class="star">✦</span></span>
     </div>
     <div class="marquee marquee-2">
+      <span class="marquee-item outline">SHINE<span class="star">✧</span></span>
+      <span class="marquee-item fill">DEBUT<span class="star">✧</span></span>
+      <span class="marquee-item outline">STREAM<span class="star">✧</span></span>
+      <span class="marquee-item fill">STAR<span class="star">✧</span></span>
       <span class="marquee-item outline">SHINE<span class="star">✧</span></span>
       <span class="marquee-item fill">DEBUT<span class="star">✧</span></span>
       <span class="marquee-item outline">STREAM<span class="star">✧</span></span>
