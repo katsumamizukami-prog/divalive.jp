@@ -82,7 +82,8 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 4px);
+  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px);
+  mix-blend-mode:overlay;
 }
 .light-leak{
   position:fixed;
@@ -90,8 +91,13 @@ body{
   pointer-events:none;
   z-index:0;
   background:
-    radial-gradient(ellipse 40% 100% at 0% 50%, rgba(255,94,156,.08), transparent 50%),
-    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(255,216,107,.06), transparent 50%);
+    radial-gradient(ellipse 40% 100% at 0% 50%, rgba(255,94,156,.1), transparent 50%),
+    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(255,216,107,.08), transparent 50%);
+  animation:leakShift 12s ease-in-out infinite;
+}
+@keyframes leakShift{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.08)}
 }
 
 /* Spotlights */
@@ -107,8 +113,9 @@ body{
   width:600px;
   height:600px;
   border-radius:50%;
-  filter:blur(60px);
-  opacity:.35;
+  filter:blur(80px);
+  opacity:.5;
+  mix-blend-mode:screen;
 }
 .sl1{
   background:radial-gradient(circle, var(--neon-pink), transparent 70%);
@@ -175,7 +182,9 @@ header{
   transition:all .4s;
 }
 header.scrolled{
-  background:rgba(10,4,8,.96);
+  background:rgba(10,4,8,.85);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   padding:1rem 3rem;
   border-bottom:1px solid var(--line);
 }
@@ -196,6 +205,7 @@ header.scrolled{
 }
 @keyframes shimmer{
   0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 nav ul{list-style:none;display:flex;gap:2.4rem;align-items:center}
 nav a{
@@ -239,7 +249,7 @@ nav a:hover{color:var(--neon-pink)}
   align-items:center;
   gap:.6rem;
   padding:.5rem 1.1rem;
-  background:rgba(255,59,92,.18);
+  background:rgba(255,59,92,.12);
   border:1px solid var(--live-red);
   border-radius:30px;
   font-family:var(--sans);
@@ -248,6 +258,8 @@ nav a:hover{color:var(--neon-pink)}
   text-transform:uppercase;
   color:var(--live-red);
   font-weight:600;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
   animation:liveFloat 4s ease-in-out infinite;
 }
 .live-badge .dot{
@@ -282,9 +294,10 @@ nav a:hover{color:var(--neon-pink)}
 .orb{
   position:absolute;
   border-radius:50%;
-  filter:blur(30px);
-  opacity:.4;
+  filter:blur(40px);
+  opacity:.5;
   pointer-events:none;
+  mix-blend-mode:screen;
 }
 .orb1{
   width:400px;height:400px;
@@ -459,7 +472,7 @@ nav a:hover{color:var(--neon-pink)}
   line-height:.85;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  filter:drop-shadow(0 0 30px rgba(255,216,107,.3)) drop-shadow(0 0 60px rgba(255,94,156,.2));
+  animation:titleGlow 4s ease-in-out 2s infinite;
   position:relative;
 }
 .hero-title .letter{
@@ -475,6 +488,10 @@ nav a:hover{color:var(--neon-pink)}
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
+}
+@keyframes titleGlow{
+  0%,100%{filter:drop-shadow(0 0 30px rgba(255,216,107,.35)) drop-shadow(0 0 60px rgba(255,94,156,.2))}
+  50%{filter:drop-shadow(0 0 50px rgba(255,94,156,.55)) drop-shadow(0 0 90px rgba(217,70,168,.3))}
 }
 
 .hero-tagline{
@@ -1069,6 +1086,7 @@ section{position:relative;z-index:3}
   background:linear-gradient(rgba(255,255,255,.04),rgba(255,255,255,.04)) padding-box,
              linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink)) border-box;
   border:2px solid transparent;
+  backdrop-filter:blur(10px);
 }
 .contact-btn:hover{
   background:linear-gradient(rgba(255,94,156,.15),rgba(255,216,107,.1)) padding-box,
@@ -1306,53 +1324,6 @@ footer::before{
   .contact-bg{ font-size: clamp(10rem, 40vmin, 16rem) !important; }
   .contact h2{ font-size: 3rem !important; }
   .company-head h2{ font-size: 3rem !important; }
-
-  /* iOS WebKit GPU合成バグ対策: モバイルでは重いエフェクトを完全停止 */
-  /* 全画面チラつきの主因(filter:drop-shadow + 多レイヤー合成)を一括無効化 */
-  *, *::before, *::after{
-    animation: none !important;
-  }
-  /* 主要なfadeIn演出だけは保持 */
-  .reveal{
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  /* グラデーションテキストは静的に */
-  .logo, .footer-logo,
-  .about-title em, .benefit-head h2 .gradient,
-  .marquee-item.fill, .contact h2 em{
-    background-position: 0% 50% !important;
-    -webkit-animation: none !important;
-    animation: none !important;
-  }
-  /* 重い装飾レイヤーを非表示 */
-  .spotlights, .light-leak, .particles{
-    display: none !important;
-  }
-  /* drop-shadowを軽量化 */
-  .hero-title{
-    filter: none !important;
-  }
-  .hero-eyebrow .star,
-  .sparkle,
-  .marquee-item .star,
-  .hero-frame-outer::before,
-  .hero-frame-outer::after,
-  .hero-frame-mid::before,
-  .hero-frame-mid::after{
-    filter: none !important;
-  }
-  /* マーキーは保持(横スクロールはOK) */
-  .top-marquee-track,
-  .marquee-1,
-  .marquee-2{
-    animation: scroll 30s linear infinite !important;
-  }
-  /* fadeUpアニメーション(初回ロード時)は保持 */
-  .hero-eyebrow{ animation: fadeUp 1.2s .3s forwards !important; }
-  .hero-title{ animation: fadeUp 1.5s .5s forwards !important; }
-  .hero-tagline{ animation: fadeUp 1.2s .9s forwards !important; }
-  .hero-scroll{ animation: fadeUp 1.2s 1.4s forwards !important; }
 
   header{padding:1rem 1.2rem}
   header.scrolled{padding:.8rem 1.2rem}
@@ -1743,7 +1714,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 const particlesContainer = document.getElementById('particles');
 const types = ['gold','pink','magenta'];
 const sizes = ['s','m','l'];
-for(let i = 0; i < 20; i++){
+for(let i = 0; i < 45; i++){
   const p = document.createElement('div');
   p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
   p.style.left = Math.random() * 100 + '%';
