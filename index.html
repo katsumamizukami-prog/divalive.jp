@@ -1307,8 +1307,51 @@ footer::before{
 
 /* ===== Mobile ===== */
 @media (max-width:880px){
+  /* === iOS WebKit 点滅対策(動くアニメは残す) === */
+  /* iPhoneで全画面チラつきを起こす「3大重量級エフェクト」だけ停止 */
+
+  /* ① mix-blend-mode: GPU合成レイヤーがバグる主因 */
+  .spotlight, .orb{ mix-blend-mode: normal !important; }
+  .bg-fx::after{ mix-blend-mode: normal !important; }
+
+  /* ② backdrop-filter: 毎フレーム背景再ぼかし → ヘッダー等が点滅 */
+  header.scrolled,
+  .live-badge,
+  .contact-btn{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  header.scrolled{ background: rgba(10,4,8,.94) !important; }
+  .live-badge{ background: rgba(28,8,14,.85) !important; }
+
+  /* ③ アニメ する filter:drop-shadow → ヒーロー文字が点滅 */
+  .hero-title{
+    animation: none !important;
+    filter: drop-shadow(0 0 25px rgba(255,216,107,.25))
+            drop-shadow(0 0 50px rgba(255,94,156,.18)) !important;
+  }
+
+  /* ④ shimmer (テキストグラデ動かす) → 細かい点滅 */
+  .logo, .footer-logo,
+  .about-title em, .benefit-head h2 .gradient,
+  .marquee-item.fill, .contact h2 em{
+    animation: none !important;
+    background-position: 0% 50% !important;
+  }
+
+  /* ⑤ light-leak のフルスクリーン拡縮アニメは停止 */
+  .light-leak{ animation: none !important; }
+
+  /* ⑥ パーティクルを20個に減らす(45は重すぎ) */
+  .particle:nth-child(n+21){ display: none !important; }
+
+  /* === ↓これらは残す(iPhoneでも軽快に動く) === */
+  /* rotateFrame(円フレーム回転) / twinkle(スパークル) / */
+  /* liveFloat(LIVE NOW浮遊) / scroll(マーキー) / */
+  /* floatOrb・driftSpot(光球の漂い) / fadeUp(ヒーロー登場) / reveal(スクロール表示) */
+
+  /* === 既存のフォントサイズ揺れ対策 === */
   /* iOS URLバーの伸縮で vw計算が走り、文字サイズが揺れる現象を防ぐ */
-  /* 全てのclamp()フォントサイズをvw不使用の固定値に上書き */
   .hero-title{ font-size: clamp(6rem, 22vmin, 11rem) !important; }
   .hero-tagline{ font-size: .85rem !important; }
   .about-bg-line{ font-size: clamp(5rem, 16vmin, 8rem) !important; }
