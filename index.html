@@ -66,17 +66,6 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* ===== iOS WebKit Stabilizers ===== */
-/* iOS Chrome / Safariでの全体チラつき(GPU合成バグ)を防ぐためのHWアクセラレーション */
-header, .live-badge, .float-buttons, .float-btn,
-.hero-title, .hero-eyebrow, .hero-tagline,
-.logo, .menu-toggle, .footer-logo{
-  -webkit-transform: translate3d(0,0,0);
-  transform: translate3d(0,0,0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
 /* ===== Background ===== */
 .bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0}
 .bg-fx::before{
@@ -207,7 +196,6 @@ header.scrolled{
 }
 @keyframes shimmer{
   0%,100%{background-position:0% 50%}
-  50%{background-position:100% 50%}
 }
 nav ul{list-style:none;display:flex;gap:2.4rem;align-items:center}
 nav a{
@@ -1289,8 +1277,83 @@ footer::before{
 }
 .reveal.visible{opacity:1;transform:translateY(0)}
 
+/* ===== フォント読込完了まで、hero全体を非表示 ===== */
+/* 代用フォント→Cormorant Garamond切替時の文字サイズ揺れ(FOUT)を防ぐ */
+.hero-main{
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.fonts-loaded .hero-main{
+  opacity: 1;
+}
+
 /* ===== Mobile ===== */
 @media (max-width:880px){
+  /* iOS URLバーの伸縮で vw計算が走り、文字サイズが揺れる現象を防ぐ */
+  /* 全てのclamp()フォントサイズをvw不使用の固定値に上書き */
+  .hero-title{ font-size: clamp(6rem, 22vmin, 11rem) !important; }
+  .hero-tagline{ font-size: .85rem !important; }
+  .about-bg-line{ font-size: clamp(5rem, 16vmin, 8rem) !important; }
+  .about-title{ font-size: 2.6rem !important; }
+  .about-lead{ font-size: .95rem !important; }
+  .benefit-head h2{ font-size: clamp(3rem, 11vmin, 4.5rem) !important; }
+  .platform-head h3{ font-size: 1.4rem !important; }
+  .marquee-item{ font-size: clamp(3.5rem, 12vmin, 5rem) !important; }
+  .flow-head h2{ font-size: 3.5rem !important; }
+  .flow-row-num .num{ font-size: 4rem !important; }
+  .flow-row-text h4{ font-size: 1.7rem !important; }
+  .stat-big{ font-size: clamp(3.5rem, 13vmin, 5rem) !important; }
+  .contact-bg{ font-size: clamp(10rem, 40vmin, 16rem) !important; }
+  .contact h2{ font-size: 3rem !important; }
+  .company-head h2{ font-size: 3rem !important; }
+
+  /* iOS WebKit GPU合成バグ対策: モバイルでは重いエフェクトを完全停止 */
+  /* 全画面チラつきの主因(filter:drop-shadow + 多レイヤー合成)を一括無効化 */
+  *, *::before, *::after{
+    animation: none !important;
+  }
+  /* 主要なfadeIn演出だけは保持 */
+  .reveal{
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* グラデーションテキストは静的に */
+  .logo, .footer-logo,
+  .about-title em, .benefit-head h2 .gradient,
+  .marquee-item.fill, .contact h2 em{
+    background-position: 0% 50% !important;
+    -webkit-animation: none !important;
+    animation: none !important;
+  }
+  /* 重い装飾レイヤーを非表示 */
+  .spotlights, .light-leak, .particles{
+    display: none !important;
+  }
+  /* drop-shadowを軽量化 */
+  .hero-title{
+    filter: none !important;
+  }
+  .hero-eyebrow .star,
+  .sparkle,
+  .marquee-item .star,
+  .hero-frame-outer::before,
+  .hero-frame-outer::after,
+  .hero-frame-mid::before,
+  .hero-frame-mid::after{
+    filter: none !important;
+  }
+  /* マーキーは保持(横スクロールはOK) */
+  .top-marquee-track,
+  .marquee-1,
+  .marquee-2{
+    animation: scroll 30s linear infinite !important;
+  }
+  /* fadeUpアニメーション(初回ロード時)は保持 */
+  .hero-eyebrow{ animation: fadeUp 1.2s .3s forwards !important; }
+  .hero-title{ animation: fadeUp 1.5s .5s forwards !important; }
+  .hero-tagline{ animation: fadeUp 1.2s .9s forwards !important; }
+  .hero-scroll{ animation: fadeUp 1.2s 1.4s forwards !important; }
+
   header{padding:1rem 1.2rem}
   header.scrolled{padding:.8rem 1.2rem}
   .logo{font-size:1.9rem}
@@ -1635,6 +1698,24 @@ footer::before{
 </div>
 
 <script>
+// ===== Webフォント読み込み完了を待ってヒーローを表示 =====
+// (Cormorant Garamondの読込前に表示すると代用フォントで表示され、後で書体が切り替わって文字サイズが変動するのを防ぐ)
+(function(){
+  var showHero = function(){
+    document.documentElement.classList.add('fonts-loaded');
+  };
+  if (document.fonts && document.fonts.ready) {
+    // フォント読込み完了 OR 1.5秒タイムアウト、どちらか早い方
+    Promise.race([
+      document.fonts.ready,
+      new Promise(function(resolve){ setTimeout(resolve, 1500); })
+    ]).then(showHero);
+  } else {
+    // 古いブラウザ向けフォールバック
+    setTimeout(showHero, 800);
+  }
+})();
+
 const header = document.getElementById('header');
 window.addEventListener('scroll', () => {
   header.classList.toggle('scrolled', window.scrollY > 50);
