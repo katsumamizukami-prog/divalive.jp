@@ -472,13 +472,12 @@ nav a:hover{color:var(--neon-pink)}
   line-height:.85;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  opacity:0;
-  animation:fadeUp 1.5s .5s forwards, titleGlow 4s ease-in-out 2s infinite;
+  animation:titleGlow 4s ease-in-out 2s infinite;
   position:relative;
-  will-change:filter;
 }
 .hero-title .letter{
   display:inline-block;
+  color:var(--neon-pink); /* fallback: グラデーション失敗時の色 */
   background:linear-gradient(180deg,
     var(--champagne) 0%,
     var(--neon-gold) 25%,
