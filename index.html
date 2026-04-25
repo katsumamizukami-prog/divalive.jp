@@ -1390,6 +1390,50 @@ footer::before{
     height: auto !important;
   }
 
+  /* ⑪ マーキー(Platform)の点滅・カクつき対策 ★★★ */
+  /* 動いている文字に重い装飾(drop-shadow + gradient text + text-stroke)が */
+  /* 乗っているとiOSのGPUが追いつかない。装飾を軽量化する */
+
+  /* マーキー文字のドロップシャドウを削除(動く要素には致命的) */
+  .marquee-item.fill,
+  .marquee-item.outline,
+  .marquee-item .star{
+    filter: none !important;
+  }
+
+  /* グラデーションテキストを単色に(動く要素には重すぎる) */
+  .marquee-item.fill{
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: var(--neon-pink) !important;
+    color: var(--neon-pink) !important;
+  }
+
+  /* text-strokeも単色塗りに */
+  .marquee-item.outline{
+    -webkit-text-stroke: 0 !important;
+    color: var(--neon-gold) !important;
+    -webkit-text-fill-color: var(--neon-gold) !important;
+  }
+
+  /* マーキーをGPU独立レイヤー化(iOS WebKitに「ここは別レイヤー」と教える) */
+  .marquee-1, .marquee-2, .top-marquee-track{
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    will-change: transform;
+  }
+
+  /* Platformセクションの上下に走る光るグラデ線のbox-shadow削減 */
+  .platform::before,
+  .platform::after,
+  .benefit::before,
+  .stats::before,
+  .stats::after,
+  footer::before{
+    box-shadow: none !important;
+  }
+
   /* === ↓これらは残す(iPhoneでも軽快に動く) === */
   /* rotateFrame(円フレーム回転) / twinkle(スパークル) / */
   /* liveFloat(LIVE NOW浮遊) / scroll(マーキー) / */
