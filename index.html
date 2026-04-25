@@ -179,7 +179,7 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  transition:all .4s;
+  transition: padding .3s, background-color .3s, border-color .3s;
 }
 header.scrolled{
   background:rgba(10,4,8,.85);
@@ -1308,7 +1308,7 @@ footer::before{
 /* ===== Mobile ===== */
 @media (max-width:880px){
   /* === iOS WebKit 点滅対策(動くアニメは残す) === */
-  /* iPhoneで全画面チラつきを起こす「3大重量級エフェクト」だけ停止 */
+  /* iPhoneで全画面チラつきを起こす「重量級エフェクト」を停止 */
 
   /* ① mix-blend-mode: GPU合成レイヤーがバグる主因 */
   .spotlight, .orb{ mix-blend-mode: normal !important; }
@@ -1339,11 +1339,56 @@ footer::before{
     background-position: 0% 50% !important;
   }
 
-  /* ⑤ light-leak のフルスクリーン拡縮アニメは停止 */
-  .light-leak{ animation: none !important; }
+  /* ⑤ 全画面の動くfixed装飾レイヤーを停止/非表示 */
+  /* light-leakは元々ほぼ見えないので非表示にして1レイヤー削減 */
+  .light-leak{ display: none !important; }
+  /* 背景ノイズも停止(iOSで点滅原因) */
+  .bg-fx{ display: none !important; }
 
-  /* ⑥ パーティクルを20個に減らす(45は重すぎ) */
-  .particle:nth-child(n+21){ display: none !important; }
+  /* ⑥ スポットライト・オーブのblur量を削減 + アニメ停止 */
+  .spotlight{
+    filter: blur(45px) !important;
+    opacity: .25 !important;
+    animation: none !important;
+  }
+  .orb{
+    filter: blur(25px) !important;
+    opacity: .35 !important;
+    animation: none !important;
+  }
+
+  /* ⑦ 巨大な回転フレーム(130vmin)はGPU合成が重い→停止 */
+  .hero-frame-outer,
+  .hero-frame-mid,
+  .hero-frame-inner{
+    animation: none !important;
+  }
+  /* 円フレーム上の点光源のbox-shadowを軽量化 */
+  .hero-frame-outer::before,
+  .hero-frame-outer::after,
+  .hero-frame-mid::before,
+  .hero-frame-mid::after{
+    box-shadow: 0 0 15px currentColor !important;
+  }
+
+  /* ⑧ コーナー装飾(&)を非表示(text-strokeが重い) */
+  .ornament-corner{ display: none !important; }
+
+  /* ⑨ コンタクトの巨大背景文字(45vw)を縮小 */
+  .contact-bg{
+    -webkit-text-stroke: 1px rgba(255,179,209,.08) !important;
+  }
+  .contact-glow{
+    animation: none !important;
+    opacity: .5 !important;
+  }
+
+  /* ⑩ ヒーローの高さをiOSの動的ビューポートに合わせる */
+  /* 100vhはiOSで安定しないので100svh(small viewport height)を使う */
+  .hero{
+    min-height: 100svh !important;
+    height: auto !important;
+  }
 
   /* === ↓これらは残す(iPhoneでも軽快に動く) === */
   /* rotateFrame(円フレーム回転) / twinkle(スパークル) / */
@@ -1713,27 +1758,45 @@ footer::before{
 
 <script>
 // ===== Webフォント読み込み完了を待ってヒーローを表示 =====
-// (Cormorant Garamondの読込前に表示すると代用フォントで表示され、後で書体が切り替わって文字サイズが変動するのを防ぐ)
 (function(){
   var showHero = function(){
     document.documentElement.classList.add('fonts-loaded');
   };
   if (document.fonts && document.fonts.ready) {
-    // フォント読込み完了 OR 1.5秒タイムアウト、どちらか早い方
     Promise.race([
       document.fonts.ready,
       new Promise(function(resolve){ setTimeout(resolve, 1500); })
     ]).then(showHero);
   } else {
-    // 古いブラウザ向けフォールバック
     setTimeout(showHero, 800);
   }
 })();
 
+// ===== iOS / モバイル検知 =====
+// iPhone・iPadはCSS animationやfilter周りのGPU処理が弱いため、
+// 重い装飾(パーティクル等)はそもそも生成しない方針
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_MOBILE = window.matchMedia && window.matchMedia('(max-width: 880px)').matches;
+
+// ===== Header scroll: requestAnimationFrameでスロットル(scroll中の連続発火を防ぐ) =====
 const header = document.getElementById('header');
+let scrollTicking = false;
+let lastScrolled = false;
 window.addEventListener('scroll', () => {
-  header.classList.toggle('scrolled', window.scrollY > 50);
-});
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    const shouldBeScrolled = window.scrollY > 50;
+    if (shouldBeScrolled !== lastScrolled) {
+      header.classList.toggle('scrolled', shouldBeScrolled);
+      lastScrolled = shouldBeScrolled;
+    }
+    scrollTicking = false;
+  });
+}, { passive: true });
+
+// ===== Hamburger menu =====
 const menuToggle = document.getElementById('menuToggle');
 const nav = document.getElementById('nav');
 menuToggle.addEventListener('click', () => {
@@ -1744,6 +1807,8 @@ document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () =
   nav.classList.remove('open');
   menuToggle.textContent = '☰';
 }));
+
+// ===== Reveal on scroll =====
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
@@ -1754,16 +1819,19 @@ const observer = new IntersectionObserver((entries) => {
 }, {threshold:0.1, rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-const particlesContainer = document.getElementById('particles');
-const types = ['gold','pink','magenta'];
-const sizes = ['s','m','l'];
-for(let i = 0; i < 45; i++){
-  const p = document.createElement('div');
-  p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
-  p.style.left = Math.random() * 100 + '%';
-  p.style.animationDelay = Math.random() * 14 + 's';
-  p.style.animationDuration = (10 + Math.random() * 10) + 's';
-  particlesContainer.appendChild(p);
+// ===== Particles: モバイル/iOSはスキップ、PCのみ生成 =====
+if (!IS_IOS && !IS_MOBILE) {
+  const particlesContainer = document.getElementById('particles');
+  const types = ['gold','pink','magenta'];
+  const sizes = ['s','m','l'];
+  for(let i = 0; i < 45; i++){
+    const p = document.createElement('div');
+    p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 14 + 's';
+    p.style.animationDuration = (10 + Math.random() * 10) + 's';
+    particlesContainer.appendChild(p);
+  }
 }
 </script>
 
