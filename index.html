@@ -1417,12 +1417,16 @@ footer::before{
     -webkit-text-fill-color: var(--neon-gold) !important;
   }
 
-  /* マーキーをGPU独立レイヤー化(iOS WebKitに「ここは別レイヤー」と教える) */
+  /* マーキーをGPU独立レイヤー化(transform競合を避けるためtransform指定はしない) */
   .marquee-1, .marquee-2, .top-marquee-track{
-    -webkit-transform: translate3d(0,0,0);
-    transform: translate3d(0,0,0);
     will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
+
+  /* マーキー文字サイズを固定(vminだとURLバー伸縮で幅が変動し、ループ位置がずれる) */
+  .marquee-item{ font-size: 4rem !important; }
+  .top-marquee-track span{ font-size: 1.4rem !important; }
 
   /* Platformセクションの上下に走る光るグラデ線のbox-shadow削減 */
   .platform::before,
@@ -1448,7 +1452,7 @@ footer::before{
   .about-lead{ font-size: .95rem !important; }
   .benefit-head h2{ font-size: clamp(3rem, 11vmin, 4.5rem) !important; }
   .platform-head h3{ font-size: 1.4rem !important; }
-  .marquee-item{ font-size: clamp(3.5rem, 12vmin, 5rem) !important; }
+  .marquee-item{ /* 上で固定font-size指定済み(vminだとURLバー伸縮で揺れる) */ }
   .flow-head h2{ font-size: 3.5rem !important; }
   .flow-row-num .num{ font-size: 4rem !important; }
   .flow-row-text h4{ font-size: 1.7rem !important; }
