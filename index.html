@@ -66,6 +66,17 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
+/* ===== iOS WebKit Stabilizers ===== */
+/* iOS Chrome / Safariでの全体チラつき(GPU合成バグ)を防ぐためのHWアクセラレーション */
+header, .live-badge, .float-buttons, .float-btn,
+.hero-title, .hero-eyebrow, .hero-tagline,
+.logo, .menu-toggle, .footer-logo{
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 /* ===== Background ===== */
 .bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0}
 .bg-fx::before{
@@ -82,8 +93,7 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px);
-  mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 4px);
 }
 .light-leak{
   position:fixed;
@@ -91,13 +101,8 @@ body{
   pointer-events:none;
   z-index:0;
   background:
-    radial-gradient(ellipse 40% 100% at 0% 50%, rgba(255,94,156,.1), transparent 50%),
-    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(255,216,107,.08), transparent 50%);
-  animation:leakShift 12s ease-in-out infinite;
-}
-@keyframes leakShift{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.5;transform:scale(1.08)}
+    radial-gradient(ellipse 40% 100% at 0% 50%, rgba(255,94,156,.08), transparent 50%),
+    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(255,216,107,.06), transparent 50%);
 }
 
 /* Spotlights */
@@ -113,9 +118,8 @@ body{
   width:600px;
   height:600px;
   border-radius:50%;
-  filter:blur(80px);
-  opacity:.5;
-  mix-blend-mode:screen;
+  filter:blur(60px);
+  opacity:.35;
 }
 .sl1{
   background:radial-gradient(circle, var(--neon-pink), transparent 70%);
@@ -182,9 +186,7 @@ header{
   transition:all .4s;
 }
 header.scrolled{
-  background:rgba(10,4,8,.85);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
+  background:rgba(10,4,8,.96);
   padding:1rem 3rem;
   border-bottom:1px solid var(--line);
 }
@@ -249,7 +251,7 @@ nav a:hover{color:var(--neon-pink)}
   align-items:center;
   gap:.6rem;
   padding:.5rem 1.1rem;
-  background:rgba(255,59,92,.12);
+  background:rgba(255,59,92,.18);
   border:1px solid var(--live-red);
   border-radius:30px;
   font-family:var(--sans);
@@ -258,8 +260,6 @@ nav a:hover{color:var(--neon-pink)}
   text-transform:uppercase;
   color:var(--live-red);
   font-weight:600;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
   animation:liveFloat 4s ease-in-out infinite;
 }
 .live-badge .dot{
@@ -294,10 +294,9 @@ nav a:hover{color:var(--neon-pink)}
 .orb{
   position:absolute;
   border-radius:50%;
-  filter:blur(40px);
-  opacity:.5;
+  filter:blur(30px);
+  opacity:.4;
   pointer-events:none;
-  mix-blend-mode:screen;
 }
 .orb1{
   width:400px;height:400px;
@@ -472,7 +471,7 @@ nav a:hover{color:var(--neon-pink)}
   line-height:.85;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  animation:titleGlow 4s ease-in-out 2s infinite;
+  filter:drop-shadow(0 0 30px rgba(255,216,107,.3)) drop-shadow(0 0 60px rgba(255,94,156,.2));
   position:relative;
 }
 .hero-title .letter{
@@ -488,10 +487,6 @@ nav a:hover{color:var(--neon-pink)}
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-}
-@keyframes titleGlow{
-  0%,100%{filter:drop-shadow(0 0 30px rgba(255,216,107,.35)) drop-shadow(0 0 60px rgba(255,94,156,.2))}
-  50%{filter:drop-shadow(0 0 50px rgba(255,94,156,.55)) drop-shadow(0 0 90px rgba(217,70,168,.3))}
 }
 
 .hero-tagline{
@@ -1086,7 +1081,6 @@ section{position:relative;z-index:3}
   background:linear-gradient(rgba(255,255,255,.04),rgba(255,255,255,.04)) padding-box,
              linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink)) border-box;
   border:2px solid transparent;
-  backdrop-filter:blur(10px);
 }
 .contact-btn:hover{
   background:linear-gradient(rgba(255,94,156,.15),rgba(255,216,107,.1)) padding-box,
@@ -1668,7 +1662,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 const particlesContainer = document.getElementById('particles');
 const types = ['gold','pink','magenta'];
 const sizes = ['s','m','l'];
-for(let i = 0; i < 45; i++){
+for(let i = 0; i < 20; i++){
   const p = document.createElement('div');
   p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
   p.style.left = Math.random() * 100 + '%';
