@@ -8,7 +8,7 @@
 
 <!-- ====== OGP / SNS Card ====== -->
 <meta property="og:title" content="DiVA | Liver Agency Tokyo">
-<meta property="og:description" content="ライバー事務所DiVA(ディーバ)。Pococha・17LIVE・TikTok・IRIAM対応。初期費用0円、未経験・副業・地方からのスタート歓迎。">
+<meta property="og:description" content="ライバー事務所DiVA(ディーバ)。Pococha・17LIVE・TikTok対応。初期費用0円、未経験・副業・地方からのスタート歓迎。">
 <meta property="og:image" content="https://divalive.jp/divalive_ogp.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -21,7 +21,7 @@
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DiVA | Liver Agency Tokyo">
-<meta name="twitter:description" content="ライバー事務所DiVA(ディーバ)。Pococha・17LIVE・TikTok・IRIAM対応。初期費用0円、未経験・副業・地方からのスタート歓迎。">
+<meta name="twitter:description" content="ライバー事務所DiVA(ディーバ)。Pococha・17LIVE・TikTok対応。初期費用0円、未経験・副業・地方からのスタート歓迎。">
 <meta name="twitter:image" content="https://divalive.jp/divalive_ogp.png">
 <meta name="twitter:image:alt" content="DiVA - 輝く、ディーバへ。">
 
@@ -543,12 +543,17 @@ nav a:hover{color:var(--neon-pink)}
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
   background:linear-gradient(90deg, rgba(217,70,168,.08), rgba(255,216,107,.05), rgba(217,70,168,.08));
+  contain:layout paint;
 }
 .top-marquee-track{
   display:flex;
   white-space:nowrap;
-  animation:scroll 25s linear infinite;
+  width:max-content;
+  animation:top-scroll 35s linear infinite;
   gap:3rem;
+  will-change:transform;
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
 }
 .top-marquee-track span{
   font-family:var(--display);
@@ -566,6 +571,10 @@ nav a:hover{color:var(--neon-pink)}
   color:var(--neon-gold);
   font-size:1rem;
   filter:drop-shadow(0 0 8px var(--neon-gold));
+}
+@keyframes top-scroll{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-66.6667%,0,0)}
 }
 @keyframes scroll{
   from{transform:translateX(0)}
@@ -811,13 +820,22 @@ section{position:relative;z-index:3}
   background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-.marquee-stack{display:flex;flex-direction:column;gap:1.5rem}
-.marquee{display:flex;white-space:nowrap;gap:0;width:max-content;will-change:transform}
+.marquee-stack{display:flex;flex-direction:column;gap:1.5rem;contain:layout paint}
+.marquee{
+  display:flex;
+  white-space:nowrap;
+  gap:0;
+  width:max-content;
+  will-change:transform;
+  /* GPU合成レイヤーを強制してフレームレート安定化 */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+}
 .marquee-1{animation:platform-scroll 60s linear infinite}
 .marquee-2{animation:platform-scroll 70s linear infinite reverse}
 @keyframes platform-scroll{
-  from{transform:translateX(0)}
-  to{transform:translateX(-66.6667%)}
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-66.6667%,0,0)}
 }
 .marquee-item{
   font-family:var(--display);
@@ -1587,20 +1605,18 @@ footer::before{
 <!-- TOP MARQUEE -->
 <div class="top-marquee">
   <div class="top-marquee-track">
-    <span>SHINE BRIGHT</span>
     <span>BE A DIVA</span>
     <span>POCOCHA</span>
     <span>17LIVE</span>
     <span>TIKTOK</span>
-    <span>IRIAM</span>
-    <span>LIVE STREAMING</span>
-    <span>SHINE BRIGHT</span>
     <span>BE A DIVA</span>
     <span>POCOCHA</span>
     <span>17LIVE</span>
     <span>TIKTOK</span>
-    <span>IRIAM</span>
-    <span>LIVE STREAMING</span>
+    <span>BE A DIVA</span>
+    <span>POCOCHA</span>
+    <span>17LIVE</span>
+    <span>TIKTOK</span>
   </div>
 </div>
 
@@ -1659,15 +1675,15 @@ footer::before{
       <span class="marquee-item fill">Pococha<span class="star">✦</span></span>
       <span class="marquee-item outline">17LIVE<span class="star">✦</span></span>
       <span class="marquee-item fill">TikTok<span class="star">✦</span></span>
-      <span class="marquee-item outline">IRIAM<span class="star">✦</span></span>
+      <span class="marquee-item outline">Pococha<span class="star">✦</span></span>
+      <span class="marquee-item fill">17LIVE<span class="star">✦</span></span>
+      <span class="marquee-item outline">TikTok<span class="star">✦</span></span>
       <span class="marquee-item fill">Pococha<span class="star">✦</span></span>
       <span class="marquee-item outline">17LIVE<span class="star">✦</span></span>
       <span class="marquee-item fill">TikTok<span class="star">✦</span></span>
-      <span class="marquee-item outline">IRIAM<span class="star">✦</span></span>
-      <span class="marquee-item fill">Pococha<span class="star">✦</span></span>
-      <span class="marquee-item outline">17LIVE<span class="star">✦</span></span>
-      <span class="marquee-item fill">TikTok<span class="star">✦</span></span>
-      <span class="marquee-item outline">IRIAM<span class="star">✦</span></span>
+      <span class="marquee-item outline">Pococha<span class="star">✦</span></span>
+      <span class="marquee-item fill">17LIVE<span class="star">✦</span></span>
+      <span class="marquee-item outline">TikTok<span class="star">✦</span></span>
     </div>
     <div class="marquee marquee-2">
       <span class="marquee-item outline">SHINE<span class="star">✧</span></span>
