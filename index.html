@@ -73,10 +73,8 @@ body{
   position:absolute;
   inset:0;
   background:
-    radial-gradient(ellipse 50% 35% at 25% 15%, rgba(255,179,209,.25), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(217,70,168,.18), transparent 60%),
-    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(255,216,107,.15), transparent 60%),
-    radial-gradient(ellipse 35% 30% at 10% 90%, rgba(244,216,163,.12), transparent 60%);
+    radial-gradient(ellipse 55% 45% at 25% 15%, rgba(255,179,209,.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(217,70,168,.16), transparent 60%);
 }
 .bg-fx::after{
   content:"";
@@ -128,10 +126,7 @@ body{
   animation:driftSpot 35s ease-in-out infinite reverse;
 }
 .sl3{
-  background:radial-gradient(circle, var(--magenta), transparent 70%);
-  top:30%;right:20%;
-  animation:driftSpot 42s ease-in-out infinite;
-  animation-delay:-5s;
+  display:none;
 }
 @keyframes driftSpot{
   0%,100%{transform:translate(0,0) scale(1)}
@@ -149,15 +144,15 @@ body{
 }
 .particle.gold{
   background:var(--neon-gold);
-  box-shadow:0 0 12px var(--neon-gold), 0 0 24px var(--gold-bright);
+  box-shadow:0 0 10px var(--neon-gold);
 }
 .particle.pink{
   background:var(--neon-pink);
-  box-shadow:0 0 12px var(--neon-pink), 0 0 24px var(--pink-bright);
+  box-shadow:0 0 10px var(--neon-pink);
 }
 .particle.magenta{
   background:var(--magenta);
-  box-shadow:0 0 12px var(--magenta), 0 0 24px var(--neon-pink);
+  box-shadow:0 0 10px var(--magenta);
 }
 .particle.s{width:2px;height:2px}
 .particle.m{width:3px;height:3px}
@@ -303,13 +298,11 @@ nav a:hover{color:var(--neon-pink)}
   width:350px;height:350px;
   background:radial-gradient(circle at 30% 30%, var(--neon-pink), var(--magenta) 50%, transparent 80%);
   top:10%;left:5%;
-  animation:floatOrb 18s ease-in-out infinite;
 }
 .orb2{
   width:300px;height:300px;
   background:radial-gradient(circle at 30% 30%, var(--neon-gold), var(--gold) 50%, transparent 80%);
   bottom:10%;right:8%;
-  animation:floatOrb 22s ease-in-out infinite reverse;
 }
 @keyframes floatOrb{
   0%,100%{transform:translate(0,0) scale(1)}
@@ -468,11 +461,12 @@ nav a:hover{color:var(--neon-pink)}
   font-family:var(--display);
   font-style:italic;
   font-weight:500;
-  font-size:clamp(6rem, 24vw, 26rem);
-  line-height:.85;
+  font-size:clamp(5rem, 20vw, 22rem);
+  line-height:1.05;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  filter:drop-shadow(0 0 30px rgba(255,216,107,.4)) drop-shadow(0 0 60px rgba(255,94,156,.25));
+  padding:.15em 0;
+  filter:drop-shadow(0 0 30px rgba(255,94,156,.4));
   position:relative;
 }
 .hero-title .letter{
@@ -1979,7 +1973,7 @@ if (!IS_IOS && !IS_MOBILE) {
   const particlesContainer = document.getElementById('particles');
   const types = ['gold','pink','magenta'];
   const sizes = ['s','m','l'];
-  for(let i = 0; i < 25; i++){
+  for(let i = 0; i < 15; i++){
     const p = document.createElement('div');
     p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
     p.style.left = Math.random() * 100 + '%';
