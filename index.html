@@ -67,7 +67,7 @@ body{
 }
 
 /* ===== Background ===== */
-.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0}
+.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0;display:none}
 .bg-fx::before{
   content:"";
   position:absolute;
@@ -80,23 +80,9 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px);
-  mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 4px);
 }
-.light-leak{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  background:
-    radial-gradient(ellipse 40% 100% at 0% 50%, rgba(255,94,156,.1), transparent 50%),
-    radial-gradient(ellipse 40% 100% at 100% 50%, rgba(255,216,107,.08), transparent 50%);
-  animation:leakShift 12s ease-in-out infinite;
-}
-@keyframes leakShift{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.5;transform:scale(1.08)}
-}
+.light-leak{display:none}
 
 /* Spotlights */
 .spotlights{
@@ -112,18 +98,15 @@ body{
   height:500px;
   border-radius:50%;
   filter:blur(60px);
-  opacity:.45;
-  mix-blend-mode:screen;
+  opacity:.35;
 }
 .sl1{
   background:radial-gradient(circle, var(--neon-pink), transparent 70%);
   top:-200px;left:-200px;
-  animation:driftSpot 30s ease-in-out infinite;
 }
 .sl2{
   background:radial-gradient(circle, var(--neon-gold), transparent 70%);
   bottom:-200px;right:-200px;
-  animation:driftSpot 35s ease-in-out infinite reverse;
 }
 .sl3{
   display:none;
@@ -191,12 +174,9 @@ header.scrolled{
   letter-spacing:.04em;
   text-decoration:none;
   background:linear-gradient(135deg, var(--champagne), var(--neon-gold), var(--rose-bright), var(--neon-pink), var(--gold));
-  background-size:300% 300%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 6s ease-in-out infinite;
-  filter:drop-shadow(0 0 20px rgba(255,94,156,.3));
 }
 @keyframes shimmer{
   0%,100%{background-position:0% 50%}
@@ -290,9 +270,8 @@ nav a:hover{color:var(--neon-pink)}
   position:absolute;
   border-radius:50%;
   filter:blur(30px);
-  opacity:.45;
+  opacity:.35;
   pointer-events:none;
-  mix-blend-mode:screen;
 }
 .orb1{
   width:350px;height:350px;
@@ -309,13 +288,8 @@ nav a:hover{color:var(--neon-pink)}
   50%{transform:translate(40px,-30px) scale(1.15)}
 }
 
-/* Concentric frames */
-.hero-frame{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-}
+/* Concentric frames - 非表示で軽量化 */
+.hero-frame{display:none}
 .hero-frame-outer{
   width:130vmin;height:130vmin;
   border:1px solid rgba(255,179,209,.2);
@@ -350,7 +324,6 @@ nav a:hover{color:var(--neon-pink)}
   border:1px solid rgba(232,195,137,.22);
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation:rotateFrame 160s linear infinite reverse;
 }
 .hero-frame-mid::before,.hero-frame-mid::after{
   content:"";
@@ -377,7 +350,6 @@ nav a:hover{color:var(--neon-pink)}
   border:1px dashed rgba(255,179,209,.25);
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation:rotateFrame 100s linear infinite;
 }
 @keyframes rotateFrame{
   from{transform:translate(-50%,-50%) rotate(0deg)}
@@ -390,7 +362,7 @@ nav a:hover{color:var(--neon-pink)}
   pointer-events:none;
   z-index:4;
   animation:twinkle 3s ease-in-out infinite;
-  filter:drop-shadow(0 0 12px currentColor);
+  filter:drop-shadow(0 0 8px currentColor);
   font-family:var(--display);
   font-style:italic;
 }
@@ -408,26 +380,15 @@ nav a:hover{color:var(--neon-pink)}
 .s8{bottom:13%;left:45%;animation-delay:-.4s;font-size:1.4rem}
 .s9{top:50%;left:18%;animation-delay:-1.6s;font-size:1.4rem}
 .s10{top:55%;right:18%;animation-delay:-2.3s;font-size:1.6rem}
+/* スパークル数を抑えて軽量化 */
+.sparkle.s5,.sparkle.s6,.sparkle.s7,.sparkle.s8,.sparkle.s9,.sparkle.s10{display:none}
 @keyframes twinkle{
   0%,100%{opacity:.4;transform:scale(.8) rotate(0deg)}
   50%{opacity:1;transform:scale(1.4) rotate(180deg)}
 }
 
-/* Decorative ornaments */
-.ornament-corner{
-  position:absolute;
-  font-family:var(--display);
-  font-style:italic;
-  font-weight:300;
-  font-size:6rem;
-  pointer-events:none;
-  z-index:2;
-  color:transparent;
-}
-.oc-tl{top:7rem;left:3rem;-webkit-text-stroke:1px rgba(255,179,209,.5)}
-.oc-tr{top:7rem;right:3rem;-webkit-text-stroke:1px rgba(255,216,107,.5);transform:scaleX(-1)}
-.oc-bl{bottom:5rem;left:3rem;-webkit-text-stroke:1px rgba(255,216,107,.5);transform:scaleY(-1)}
-.oc-br{bottom:5rem;right:3rem;-webkit-text-stroke:1px rgba(255,179,209,.5);transform:scale(-1,-1)}
+/* Decorative ornaments - 非表示で軽量化 */
+.ornament-corner{display:none}
 
 .hero-main{position:relative;text-align:center;z-index:6;padding:0 2rem}
 .hero-eyebrow{
@@ -461,27 +422,35 @@ nav a:hover{color:var(--neon-pink)}
   font-family:var(--display);
   font-style:italic;
   font-weight:500;
-  font-size:clamp(5rem, 20vw, 22rem);
-  line-height:1.05;
+  font-size:clamp(5rem, 18vw, 20rem);
+  line-height:1.2;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  padding:.15em 0;
+  padding:.25em .5em .35em;
   filter:drop-shadow(0 0 30px rgba(255,94,156,.4));
   position:relative;
+  overflow:visible;
 }
 .hero-title .letter{
   display:inline-block;
+  padding:0;
+  line-height:.9;
+  overflow:visible;
   color:var(--neon-pink); /* fallback: グラデーション失敗時の色 */
   background:linear-gradient(180deg,
     var(--champagne) 0%,
-    var(--neon-gold) 25%,
-    var(--gold) 45%,
-    var(--rose-bright) 65%,
-    var(--neon-pink) 85%,
-    var(--magenta) 100%);
+    var(--neon-gold) 15%,
+    var(--gold) 30%,
+    var(--rose-bright) 50%,
+    var(--neon-pink) 75%,
+    var(--magenta) 95%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
+}
+/* イタリックの最後の文字(a)は右に伸びるswashがあるので追加の右余白 */
+.hero-title .letter:last-child{
+  padding-right:.18em;
 }
 @keyframes titleGlow{
   0%,100%{filter:drop-shadow(0 0 30px rgba(255,216,107,.35)) drop-shadow(0 0 60px rgba(255,94,156,.2))}
@@ -502,7 +471,7 @@ nav a:hover{color:var(--neon-pink)}
 
 .hero-scroll{
   position:absolute;
-  bottom:2.5rem;left:50%;
+  bottom:1.5rem;left:50%;
   transform:translateX(-50%);
   font-family:var(--sans);
   font-size:.65rem;
@@ -512,20 +481,24 @@ nav a:hover{color:var(--neon-pink)}
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:1rem;
+  gap:.6rem;
   opacity:0;
   animation:fadeUp 1.2s 1.4s forwards;
   z-index:6;
 }
 .hero-scroll::after{
   content:"";
-  width:1px;height:50px;
+  width:1px;height:30px;
   background:linear-gradient(180deg, var(--neon-gold), transparent);
   animation:scrollLine 2s ease-in-out infinite;
 }
 @keyframes scrollLine{
   0%,100%{transform:scaleY(.3);transform-origin:top}
   50%{transform:scaleY(1);transform-origin:top}
+}
+/* ビューポートが短い時(800px未満)はScroll表示を非表示にして重なり回避 */
+@media (max-height:800px){
+  .hero-scroll{display:none}
 }
 
 /* ===== Top Marquee (additional) ===== */
@@ -606,15 +579,7 @@ section{position:relative;z-index:3}
   position:relative;
   overflow:hidden;
 }
-.about-bg{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  display:flex;
-  flex-direction:column;
-  gap:2rem;
-  pointer-events:none;
-}
+.about-bg{display:none}
 .about-bg-line{
   font-family:var(--display);
   font-style:italic;
@@ -660,11 +625,9 @@ section{position:relative;z-index:3}
 .about-title em{
   font-style:italic;
   background:linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink), var(--magenta));
-  background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 5s ease-in-out infinite;
   filter:drop-shadow(0 0 25px rgba(255,94,156,.4));
 }
 .about-lead{
@@ -704,11 +667,9 @@ section{position:relative;z-index:3}
 }
 .benefit-head h2 .gradient{
   background:linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink), var(--magenta));
-  background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 5s ease-in-out infinite;
   filter:drop-shadow(0 0 30px rgba(255,94,156,.4));
 }
 .benefit-head h2 .outline{
@@ -845,11 +806,9 @@ section{position:relative;z-index:3}
 }
 .marquee-item.fill{
   background:linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink), var(--magenta));
-  background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 6s ease-in-out infinite;
   filter:drop-shadow(0 0 20px rgba(255,94,156,.3));
 }
 .marquee-item.outline{
@@ -1026,36 +985,8 @@ section{position:relative;z-index:3}
   position:relative;
   overflow:hidden;
 }
-.contact-bg{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  font-family:var(--display);
-  font-style:italic;
-  font-weight:300;
-  font-size:clamp(15rem, 45vw, 45rem);
-  line-height:1;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(255,179,209,.12);
-  pointer-events:none;
-  letter-spacing:-.04em;
-  user-select:none;
-}
-.contact-glow{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:700px;height:700px;
-  background:radial-gradient(circle, rgba(255,94,156,.2), rgba(217,70,168,.1), transparent 70%);
-  border-radius:50%;
-  pointer-events:none;
-  animation:pulseGlow 4s ease-in-out infinite;
-  filter:blur(20px);
-}
-@keyframes pulseGlow{
-  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.7}
-  50%{transform:translate(-50%,-50%) scale(1.25);opacity:1}
-}
+.contact-bg{display:none}
+.contact-glow{display:none}
 .contact-inner{position:relative;z-index:2;max-width:680px;margin:0 auto}
 .contact .section-tag{margin-bottom:2rem;justify-content:center}
 .contact h2{
@@ -1070,11 +1001,9 @@ section{position:relative;z-index:3}
 .contact h2 em{
   font-style:italic;
   background:linear-gradient(135deg, var(--neon-gold), var(--rose-bright), var(--neon-pink), var(--magenta));
-  background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 4s ease-in-out infinite;
   filter:drop-shadow(0 0 30px rgba(255,94,156,.5));
 }
 .contact-sub{
@@ -1170,19 +1099,9 @@ section{position:relative;z-index:3}
 .company-map{
   aspect-ratio:1.1/1;
   border:1px solid var(--line-strong);
-  filter:grayscale(100%) contrast(.85) brightness(.65) sepia(20%);
-  transition:filter .6s;
   overflow:hidden;
   position:relative;
 }
-.company-map::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg, rgba(255,94,156,.15), transparent 50%, rgba(255,216,107,.1));
-  pointer-events:none;
-}
-.company-map:hover{filter:grayscale(40%) contrast(1) brightness(.9) sepia(8%)}
 .company-map iframe{width:100%;height:100%;border:none;display:block}
 
 /* ===== Footer ===== */
@@ -1211,12 +1130,9 @@ footer::before{
   margin-bottom:.5rem;
   letter-spacing:.04em;
   background:linear-gradient(135deg, var(--champagne), var(--neon-gold), var(--rose), var(--neon-pink));
-  background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:shimmer 5s ease-in-out infinite;
-  filter:drop-shadow(0 0 25px rgba(255,94,156,.3));
 }
 .footer-tagline{
   font-family:var(--display);
@@ -1968,20 +1884,9 @@ window.addEventListener('focus', () => {
   }
 });
 
-// ===== Particles: モバイル/iOSはスキップ、PCのみ生成(数を抑えて軽量化) =====
-if (!IS_IOS && !IS_MOBILE) {
-  const particlesContainer = document.getElementById('particles');
-  const types = ['gold','pink','magenta'];
-  const sizes = ['s','m','l'];
-  for(let i = 0; i < 15; i++){
-    const p = document.createElement('div');
-    p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 14 + 's';
-    p.style.animationDuration = (10 + Math.random() * 10) + 's';
-    particlesContainer.appendChild(p);
-  }
-}
+// ===== Particles: 完全削除(GPU負荷削減のため) =====
+// パーティクルは最も重い装飾(15個 × box-shadow × 浮遊animation)なので、
+// PC/モバイル問わず生成しない方針に変更
 </script>
 
 </body>
