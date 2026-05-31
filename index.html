@@ -110,27 +110,27 @@ body{
 }
 .spotlight{
   position:absolute;
-  width:600px;
-  height:600px;
+  width:500px;
+  height:500px;
   border-radius:50%;
-  filter:blur(80px);
-  opacity:.5;
+  filter:blur(60px);
+  opacity:.45;
   mix-blend-mode:screen;
 }
 .sl1{
   background:radial-gradient(circle, var(--neon-pink), transparent 70%);
   top:-200px;left:-200px;
-  animation:driftSpot 18s ease-in-out infinite;
+  animation:driftSpot 30s ease-in-out infinite;
 }
 .sl2{
   background:radial-gradient(circle, var(--neon-gold), transparent 70%);
   bottom:-200px;right:-200px;
-  animation:driftSpot 22s ease-in-out infinite reverse;
+  animation:driftSpot 35s ease-in-out infinite reverse;
 }
 .sl3{
   background:radial-gradient(circle, var(--magenta), transparent 70%);
   top:30%;right:20%;
-  animation:driftSpot 28s ease-in-out infinite;
+  animation:driftSpot 42s ease-in-out infinite;
   animation-delay:-5s;
 }
 @keyframes driftSpot{
@@ -294,22 +294,22 @@ nav a:hover{color:var(--neon-pink)}
 .orb{
   position:absolute;
   border-radius:50%;
-  filter:blur(40px);
-  opacity:.5;
+  filter:blur(30px);
+  opacity:.45;
   pointer-events:none;
   mix-blend-mode:screen;
 }
 .orb1{
-  width:400px;height:400px;
+  width:350px;height:350px;
   background:radial-gradient(circle at 30% 30%, var(--neon-pink), var(--magenta) 50%, transparent 80%);
   top:10%;left:5%;
-  animation:floatOrb 12s ease-in-out infinite;
+  animation:floatOrb 18s ease-in-out infinite;
 }
 .orb2{
-  width:350px;height:350px;
+  width:300px;height:300px;
   background:radial-gradient(circle at 30% 30%, var(--neon-gold), var(--gold) 50%, transparent 80%);
   bottom:10%;right:8%;
-  animation:floatOrb 15s ease-in-out infinite reverse;
+  animation:floatOrb 22s ease-in-out infinite reverse;
 }
 @keyframes floatOrb{
   0%,100%{transform:translate(0,0) scale(1)}
@@ -327,7 +327,7 @@ nav a:hover{color:var(--neon-pink)}
   width:130vmin;height:130vmin;
   border:1px solid rgba(255,179,209,.2);
   border-radius:50%;
-  animation:rotateFrame 60s linear infinite;
+  animation:rotateFrame 120s linear infinite;
   position:relative;
 }
 .hero-frame-outer::before{
@@ -357,7 +357,7 @@ nav a:hover{color:var(--neon-pink)}
   border:1px solid rgba(232,195,137,.22);
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation:rotateFrame 80s linear infinite reverse;
+  animation:rotateFrame 160s linear infinite reverse;
 }
 .hero-frame-mid::before,.hero-frame-mid::after{
   content:"";
@@ -384,7 +384,7 @@ nav a:hover{color:var(--neon-pink)}
   border:1px dashed rgba(255,179,209,.25);
   border-radius:50%;
   transform:translate(-50%,-50%);
-  animation:rotateFrame 50s linear infinite;
+  animation:rotateFrame 100s linear infinite;
 }
 @keyframes rotateFrame{
   from{transform:translate(-50%,-50%) rotate(0deg)}
@@ -472,7 +472,7 @@ nav a:hover{color:var(--neon-pink)}
   line-height:.85;
   letter-spacing:-.04em;
   margin-bottom:1.8rem;
-  animation:titleGlow 4s ease-in-out 2s infinite;
+  filter:drop-shadow(0 0 30px rgba(255,216,107,.4)) drop-shadow(0 0 60px rgba(255,94,156,.25));
   position:relative;
 }
 .hero-title .letter{
@@ -1958,12 +1958,28 @@ if (mapEl) {
   mapObserver.observe(mapEl);
 }
 
-// ===== Particles: モバイル/iOSはスキップ、PCのみ生成 =====
+// ===== ウィンドウが非アクティブな時、重いアニメーションを停止 =====
+// (タブを切り替えた時もGPUを使い続けるのを防ぐ)
+let pauseStyleEl = null;
+window.addEventListener('blur', () => {
+  if (pauseStyleEl) return;
+  pauseStyleEl = document.createElement('style');
+  pauseStyleEl.textContent = '*, *::before, *::after { animation-play-state: paused !important; }';
+  document.head.appendChild(pauseStyleEl);
+});
+window.addEventListener('focus', () => {
+  if (pauseStyleEl) {
+    pauseStyleEl.remove();
+    pauseStyleEl = null;
+  }
+});
+
+// ===== Particles: モバイル/iOSはスキップ、PCのみ生成(数を抑えて軽量化) =====
 if (!IS_IOS && !IS_MOBILE) {
   const particlesContainer = document.getElementById('particles');
   const types = ['gold','pink','magenta'];
   const sizes = ['s','m','l'];
-  for(let i = 0; i < 45; i++){
+  for(let i = 0; i < 25; i++){
     const p = document.createElement('div');
     p.className = `particle ${types[Math.floor(Math.random()*types.length)]} ${sizes[Math.floor(Math.random()*sizes.length)]}`;
     p.style.left = Math.random() * 100 + '%';
