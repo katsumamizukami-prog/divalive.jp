@@ -1416,6 +1416,49 @@ footer::before{
   /* 動いている文字に重い装飾(drop-shadow + gradient text + text-stroke)が */
   /* 乗っているとiOSのGPUが追いつかない。装飾を軽量化する */
 
+  /* === ⓘ メモリ不足クラッシュ対策(最重要) === */
+  /* iPhoneでスクロール中にブラウザがクラッシュする(=「読み込めません」画面) */
+  /* 原因:GPU合成レイヤーが多すぎ + メモリ消費過大。徹底削減する。 */
+
+  /* ① ヒーローのDiVa文字を単色に(グラデ失敗で"i"が消える対策) */
+  .hero-title .letter{
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: var(--neon-pink) !important;
+    color: var(--neon-pink) !important;
+  }
+
+  /* ② 巨大な同心円フレーム(130vmin × 130vmin = 1500x1500px相当)を非表示 */
+  /* これがメモリ消費の主犯級。スマホでは見えなくても全画面合成されている */
+  .hero-frame{ display: none !important; }
+
+  /* ③ スパークルを半分以下に削減(10個→4個) */
+  .sparkle.s5,.sparkle.s6,.sparkle.s7,
+  .sparkle.s8,.sparkle.s9,.sparkle.s10{
+    display: none !important;
+  }
+
+  /* ④ オーブも1個だけに削減 */
+  .orb2{ display: none !important; }
+
+  /* ⑤ スポットライトも1個だけに */
+  .sl2, .sl3{ display: none !important; }
+
+  /* ⑥ 巨大なAbout背景文字を非表示 */
+  .about-bg{ display: none !important; }
+
+  /* ⑦ Contact背景の巨大文字(45vw)を非表示 */
+  .contact-bg{ display: none !important; }
+  .contact-glow{ display: none !important; }
+
+  /* ⑧ Statsの放射状グラデーション背景を削減 */
+  .stats{ background: none !important; }
+
+  /* ⑨ Companyマップのフィルターを削除(重い) */
+  .company-map{ filter: none !important; }
+  .company-map::after{ display: none !important; }
+
   /* マーキー文字のドロップシャドウを削除(動く要素には致命的) */
   .marquee-item.fill,
   .marquee-item.outline,
@@ -1805,8 +1848,7 @@ footer::before{
         <dt>Founder</dt><dd>水上 勝間</dd>
       </dl>
     </div>
-    <div class="company-map reveal">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d4857.151771082585!2d139.69610039811448!3d35.65828610085953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1z5p2x5Lqs6YO95riL6LC35Yy66YGT546E5Z2CMS0yMS0x44CA5riL6LC344Oe44O844Kv44K344OG44KjMjJG!5e0!3m2!1sja!2sjp!4v1673429256530!5m2!1sja!2sjp" allowfullscreen loading="lazy"></iframe>
+    <div class="company-map reveal" id="companyMap" data-map-src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d4857.151771082585!2d139.69610039811448!3d35.65828610085953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1z5p2x5Lqs6YO95riL6LC35Yy66YGT546E5Z2CMS0yMS0x44CA5riL6LC344Oe44O844Kv44K344OG44KjMjJG!5e0!3m2!1sja!2sjp!4v1673429256530!5m2!1sja!2sjp">
     </div>
   </div>
 </section>
@@ -1896,6 +1938,25 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, {threshold:0.1, rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ===== Google Map: 遅延ロード(メモリ削減) =====
+// iframeは重いので、Companyセクションに近づくまでDOMに挿入しない
+const mapEl = document.getElementById('companyMap');
+if (mapEl) {
+  const mapObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const iframe = document.createElement('iframe');
+        iframe.src = mapEl.getAttribute('data-map-src');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('loading', 'lazy');
+        mapEl.appendChild(iframe);
+        mapObserver.unobserve(mapEl);
+      }
+    });
+  }, { rootMargin: '300px 0px' }); // 300px手前で発火
+  mapObserver.observe(mapEl);
+}
 
 // ===== Particles: モバイル/iOSはスキップ、PCのみ生成 =====
 if (!IS_IOS && !IS_MOBILE) {
