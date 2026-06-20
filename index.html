@@ -430,6 +430,7 @@ nav a:hover{color:var(--neon-pink)}
   filter:drop-shadow(0 0 30px rgba(255,94,156,.4));
   position:relative;
   overflow:visible;
+  white-space:nowrap;
 }
 .hero-title .letter{
   display:inline-block;
@@ -1396,6 +1397,12 @@ footer::before{
   .marquee-1{ animation-duration: 40s !important; }
   .marquee-2{ animation-duration: 48s !important; }
 
+  /* スマホではヒーローのDiVa文字を1行に収める */
+  .hero-title{
+    font-size: clamp(5rem, 18vmin, 8rem) !important;
+    padding: .35em .3em !important;
+  }
+
   /* Platformセクションの上下に走る光るグラデ線のbox-shadow削減 */
   .platform::before,
   .platform::after,
@@ -1413,7 +1420,6 @@ footer::before{
 
   /* === 既存のフォントサイズ揺れ対策 === */
   /* iOS URLバーの伸縮で vw計算が走り、文字サイズが揺れる現象を防ぐ */
-  .hero-title{ font-size: clamp(6rem, 22vmin, 11rem) !important; }
   .hero-tagline{ font-size: .85rem !important; }
   .about-bg-line{ font-size: clamp(5rem, 16vmin, 8rem) !important; }
   .about-title{ font-size: 2.6rem !important; }
